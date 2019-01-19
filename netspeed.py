@@ -12,6 +12,7 @@
 '''
 import time
 import pickle
+import datetime
 import os
 import os.path
 import sys
@@ -251,16 +252,27 @@ def init():
     ''' 初始化 '''
 
     # 判断是否已经运行了一个实例
+    uptime = str(check_output(['uptime']), encoding='utf8').\
+        split()[2].replace(',', '').split(':')
+    if len(uptime) == 1:
+        uptime = time.time() - int(uptime[0])*60
+    else:
+        uptime = time.time() - int(uptime[0])*3600 - int(uptime[1])*60
     if os.path.exists(LOCK_FILE_PATH):
-        return False
-    open(LOCK_FILE_PATH, 'w').close()
+        content = open(LOCK_FILE_PATH, 'r').readline()
+        lastTime = float(content)
+        if lastTime > uptime:
+            return False
+    with open(LOCK_FILE_PATH, 'w') as fp:
+        fp.write(str(time.time()))
     return True
 
 
 def deinit():
     ''' 清理现场 '''
 
-    os.remove(LOCK_FILE_PATH)
+    if os.path.exists(LOCK_FILE_PATH):
+        os.remove(LOCK_FILE_PATH)
 
 
 c = SoftConfig()
