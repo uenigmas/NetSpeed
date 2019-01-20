@@ -33,7 +33,7 @@ SKIN_LIST = (('GreenYellow', 'black'), ('#F5BB00', 'white'),
 PROG_CATCH = '<Button-1>'
 PROG_MOVE = '<B1-Motion>'
 PROG_EXIT = '<Double-Button-3>'
-PROG_SKIN_CG = '<Double-Button-1>'
+PROG_SKIN_CG = '<Button-3>'
 PROG_MODE_CG = '<Double-Button-1>'
 PROG_SHOW = '<Enter>'
 
@@ -295,7 +295,7 @@ if __name__ == '__main__':
     mainUI.bind(PROG_CATCH, mouse_click)
     mainUI.bind(PROG_MOVE, mouse_move)
     mainUI.bind(PROG_EXIT, exit_program)
-    mainUI.bind(PROG_SKIN_CG, change_skin)
+    # mainUI.bind(PROG_SKIN_CG, change_skin)
     mainUI.bind(PROG_MODE_CG, change_mode)
     mainUI.bind(PROG_SHOW, show)
 
