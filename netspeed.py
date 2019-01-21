@@ -252,15 +252,10 @@ def init():
     ''' 初始化 '''
 
     # 判断是否已经运行了一个实例
-    uptime = str(check_output(['uptime']), encoding='utf8').\
-        split()[2].replace(',', '').split(':')
-    if len(uptime) == 1:
-        uptime = time.time() - int(uptime[0])*60
-    else:
-        uptime = time.time() - int(uptime[0])*3600 - int(uptime[1])*60
+    uptime = time.time() - \
+        float(open('/proc/uptime', 'r').readline().split()[0])
     if os.path.exists(LOCK_FILE_PATH):
-        content = open(LOCK_FILE_PATH, 'r').readline()
-        lastTime = float(content)
+        lastTime = float(open(LOCK_FILE_PATH, 'r').readline())
         if lastTime > uptime:
             return False
     with open(LOCK_FILE_PATH, 'w') as fp:
