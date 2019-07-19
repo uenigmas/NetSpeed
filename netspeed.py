@@ -252,14 +252,17 @@ def init():
     ''' 初始化 '''
 
     # 判断是否已经运行了一个实例
-    uptime = time.time() - \
-        float(open('/proc/uptime', 'r').readline().split()[0])
-    if os.path.exists(LOCK_FILE_PATH):
-        lastTime = float(open(LOCK_FILE_PATH, 'r').readline())
-        if lastTime > uptime:
+    if os.path.exists(LOCK_FILE_PATH) == False:
+        open(LOCK_FILE_PATH, 'w').write(str(os.getpid()))
+        return True
+
+    old_pid = open(LOCK_FILE_PATH, 'r').readline()
+    proc = os.popen('ps -x').readlines()
+    for v in proc:
+        if 'netspeed.py' in v and old_pid in v:
             return False
-    with open(LOCK_FILE_PATH, 'w') as fp:
-        fp.write(str(time.time()))
+
+    open(LOCK_FILE_PATH, 'w').write(str(os.getpid()))
     return True
 
 
@@ -275,11 +278,17 @@ d = SoftData()
 root = tk.Tk()
 mainUI = tk.Label()
 
-if __name__ == '__main__':
+
+def main():
     if init() == False:
-        sys.exit()
+        return
 
     readConfig()
+
+    global mainUI
+    global root
+    global c
+    global d
 
     root.geometry('+{}+{}'.format(c.CurPos[0], c.CurPos[1]))  # 窗口初始位置
     root.overrideredirect(True)  # 去掉标题栏
@@ -296,3 +305,7 @@ if __name__ == '__main__':
 
     root.after(1000, refresh)
     root.mainloop()
+
+
+if __name__ == '__main__':
+    main()
