@@ -8,8 +8,8 @@
     右键单击窗口右侧切换显示全部或一部分内容。
     悬浮窗口移动到屏幕右边时会自动隐藏，当鼠标再次移动到悬浮窗口上时，悬浮窗口会弹出。
     09版更新：增加CPU和内存占用显示
-    2019.01.19：增强模块化设计、去除不恰当的地方
 '''
+
 import time
 import pickle
 import datetime
@@ -24,12 +24,12 @@ DEFAULT_POSx = 50  # 窗口默认起始位置
 DEFAULT_POSy = 50
 
 DEMO_CPU = 'CPU:{:.0f}% MEM:{:.0f}%'
-DEMO_NET = '↓ {:<5} ↑ {:>5}'
+DEMO_NET = '↓ {:<5}/s  ↑ {:>5}/s'
 
 SKIN_LIST = (('GreenYellow', 'black'), ('#F5BB00', 'white'),
              ('DeepSkyBlue', 'Ivory'), ('Violet', 'Ivory'))
 
-# botton binding
+# button binding
 PROG_CATCH = '<Button-1>'
 PROG_MOVE = '<B1-Motion>'
 PROG_EXIT = '<Double-Button-3>'
@@ -80,6 +80,12 @@ class SoftData():
     CpuData = []
     RecvList = []
     SendList = []
+
+
+c = SoftConfig()
+d = SoftData()
+root = tk.Tk()
+mainUI = tk.Label()
 
 
 def func(x, y):
@@ -154,7 +160,7 @@ def refresh():
     '''实时刷新流量显示'''
 
     if c.IsShowNet:
-        mainUI.config(text=''.join(get_net_date()), width=20)
+        mainUI.config(text=get_net_date(), width=20)
     else:
         mainUI.config(text=get_cpu_and_mem_date(), width=20)
 
@@ -271,12 +277,6 @@ def deinit():
 
     if os.path.exists(LOCK_FILE_PATH):
         os.remove(LOCK_FILE_PATH)
-
-
-c = SoftConfig()
-d = SoftData()
-root = tk.Tk()
-mainUI = tk.Label()
 
 
 def main():
