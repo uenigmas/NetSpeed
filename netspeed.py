@@ -11,12 +11,12 @@
 '''
 
 import time
-import pickle
 import datetime
 import os
 import os.path
 import sys
 import tkinter as tk
+import json
 from subprocess import check_output
 
 DEFAULT_VERSION = 0.9
@@ -38,7 +38,7 @@ PROG_MODE_CG = '<Double-Button-1>'
 PROG_SHOW = '<Enter>'
 
 # config file path
-CONFIG_FILE_PATH = sys.path[0] + '/config.bin'
+CONFIG_FILE_PATH = sys.path[0] + '/config.json'
 LOCK_FILE_PATH = sys.path[0] + '/netspeed.loc'
 LAUNCHER_ICON_PATH = sys.path[0] + '/Minimalist.png'
 LAUNCHER_FILE_PATH = os.environ['HOME'] + \
@@ -53,7 +53,8 @@ Icon={}
 Categories=Application;
 Version={}
 Type=Application
-Terminal=false\n'''
+Terminal=false
+'''
 
 
 class SoftConfig():
@@ -231,44 +232,41 @@ def writeConfig():
         'version': c.Version,
         'curSkin': c.CurSkin
     }
-    with open(sys.path[0] + '/config.bin', 'wb') as fp:
-        pickle.dump(dic, fp)
+
+    with open(CONFIG_FILE_PATH, 'w') as f:
+        json.dump(dic, f)
 
 
 def readConfig():
     # 判断是否安装过该软件，如果没有，就开始安装
     if os.path.exists(CONFIG_FILE_PATH):
-        with open(CONFIG_FILE_PATH, 'rb') as fp:
-            dic = pickle.load(fp)
-        c.IsSingleMode = dic.get('isSingleMode')
-        c.IsShowNet = dic.get('isShowNet')
-        c.CurPos = dic.get('curPos')
-        c.Version = dic.get('version')
-        c.CurSkin = dic.get('curSkin')
-    else:
-        # 启动器图标所需内容
-        # content = DESKTOP_ENTRY_DEMO.format(
-        #     os.path.realpath(__file__), LAUNCHER_ICON, version)
-        # with open(LAUNCHER_FILE_PATH) as fp:
-        #     fp.write(content)
-        pass
+        dic = json.load(open(CONFIG_FILE_PATH, 'r'))
+        c.IsSingleMode = dic['isSingleMode']
+        c.IsShowNet = dic['isShowNet']
+        c.CurPos = dic['curPos']
+        c.Version = dic['version']
+        c.CurSkin = dic['curSkin']
+    # else:
+    #     # 启动器图标所需内容
+    #     content = DESKTOP_ENTRY_DEMO.format(
+    #         os.path.realpath(__file__), LAUNCHER_ICON, version)
+    #     with open(LAUNCHER_FILE_PATH) as f:
+    #         f.write(content)
 
 
 def init():
     ''' 初始化 '''
 
     # 判断是否已经运行了一个实例
-    if os.path.exists(LOCK_FILE_PATH) == False:
-        open(LOCK_FILE_PATH, 'w').write(str(os.getpid()))
-        return True
+    if os.path.exists(LOCK_FILE_PATH) == True:
+        old_pid = open(LOCK_FILE_PATH, 'r').readline()
+        proc = os.popen('ps -x').readlines()
+        for v in proc:
+            if 'netspeed.py' in v and old_pid in v:
+                return False
 
-    old_pid = open(LOCK_FILE_PATH, 'r').readline()
-    proc = os.popen('ps -x').readlines()
-    for v in proc:
-        if 'netspeed.py' in v and old_pid in v:
-            return False
-
-    open(LOCK_FILE_PATH, 'w').write(str(os.getpid()))
+    with open(LOCK_FILE_PATH, 'w') as f:
+        f.write(str(os.getpid()))
     return True
 
 
@@ -280,16 +278,16 @@ def deinit():
 
 
 def main():
-    if init() == False:
-        return
-
-    readConfig()
 
     global mainUI
     global root
     global c
     global d
 
+    if init() == False:
+        return
+
+    readConfig()
     root.geometry('+{}+{}'.format(c.CurPos[0], c.CurPos[1]))  # 窗口初始位置
     root.overrideredirect(True)  # 去掉标题栏
     root.wm_attributes('-topmost', 1)  # 置顶窗口
