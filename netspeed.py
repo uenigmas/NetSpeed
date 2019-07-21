@@ -262,7 +262,8 @@ def init():
     if os.path.exists(LOCK_FILE_PATH) == True:
         with open(LOCK_FILE_PATH, 'r') as f:
             old_pid = f.readline()
-        proc = os.popen('ps -x').readlines()
+        with os.popen('ps -x') as p:
+            proc = p.readlines()
         for v in proc:
             if 'netspeed.py' in v and old_pid in v:
                 return False
