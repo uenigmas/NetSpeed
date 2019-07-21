@@ -240,7 +240,8 @@ def writeConfig():
 def readConfig():
     # 判断是否安装过该软件，如果没有，就开始安装
     if os.path.exists(CONFIG_FILE_PATH):
-        dic = json.load(open(CONFIG_FILE_PATH, 'r'))
+        with open(CONFIG_FILE_PATH, 'r') as f:
+            dic = json.load(f)
         c.IsSingleMode = dic['isSingleMode']
         c.IsShowNet = dic['isShowNet']
         c.CurPos = dic['curPos']
@@ -259,7 +260,8 @@ def init():
 
     # 判断是否已经运行了一个实例
     if os.path.exists(LOCK_FILE_PATH) == True:
-        old_pid = open(LOCK_FILE_PATH, 'r').readline()
+        with open(LOCK_FILE_PATH, 'r') as f:
+            old_pid = f.readline()
         proc = os.popen('ps -x').readlines()
         for v in proc:
             if 'netspeed.py' in v and old_pid in v:
