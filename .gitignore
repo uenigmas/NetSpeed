@@ -1,5 +1,2 @@
-*
-!*.py
-!.gitignore
-!README.md
-!LICENSE
+.vscode
+*.loc
