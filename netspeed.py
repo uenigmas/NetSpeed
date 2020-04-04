@@ -24,7 +24,7 @@ DEFAULT_POSx = 50  # 窗口默认起始位置
 DEFAULT_POSy = 50
 
 DEMO_CPU = 'CPU:{:.0f}% MEM:{:.0f}%'
-DEMO_NET = '↓ {:<5}/s  ↑ {:>5}/s'
+DEMO_NET = '↓ {:<5} ↑ {:>5}'
 
 SKIN_LIST = (('GreenYellow', 'black'), ('#F5BB00', 'white'),
              ('DeepSkyBlue', 'Ivory'), ('Violet', 'Ivory'))
@@ -100,7 +100,7 @@ def humanize(netSpeed):
     while netSpeed >= 1000:
         netSpeed /= 1024
         n += 1
-    return '{:.1f}'.format(netSpeed) + ('B', 'KB', 'MB', 'GB', 'TB')[n]
+    return '{:.1f}'.format(netSpeed) + ('B', 'K', 'M', 'G', 'T')[n]
 
 
 def get_cpu_and_mem_date():
