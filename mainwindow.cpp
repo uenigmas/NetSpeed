@@ -35,8 +35,8 @@ QString humanize(float netspeed)
 // ''' 获取cpu、内存占用数据 '''
 QString get_cpu_and_mem_date()
 {
-    static const char *PROC_STAT = "/proc/stat";
-    static const char *PROC_MEM = "/proc/meminfo";
+    const char *PROC_STAT = "/proc/stat";
+    const char *PROC_MEM = "/proc/meminfo";
 
     // CPU
     QFile f(PROC_STAT);
@@ -67,7 +67,28 @@ QString get_cpu_and_mem_date()
 // ''' 获取网络数据 '''
 QString get_net_date()
 {
-    return DEMO_NET;
+    static int lastRecv = 0, lastSend = 0;
+    QFile f("/proc/net/dev");
+    if (!f.open(QIODevice::ReadOnly))
+        return "";
+    f.readLine();
+    f.readLine();
+    int recv = 0, send = 0;
+    QString buf;
+    while ((buf = f.readLine()).length() > 0) {
+        auto split = buf.split(' ', Qt::SkipEmptyParts);
+        if (split.length() < 9)
+            continue;
+        recv += split[1].toInt();
+        send += split[9].toInt();
+    }
+    f.close();
+
+    float refRecv = recv - lastRecv, refSend = send - lastSend;
+    lastRecv = recv;
+    lastSend = send;
+
+    return DEMO_NET.arg(humanize(refRecv)).arg(humanize(refSend));
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -76,8 +97,8 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setWindowModality(Qt::ApplicationModal);
 
-    setFixedWidth(150);
-    setFixedHeight(25);
+    setFixedWidth(200);
+    setFixedHeight(28);
 
     label = new QLabel(this);
     label->setFixedWidth(width());
