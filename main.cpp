@@ -2,6 +2,12 @@
 
 #include <QApplication>
 #include <QSharedMemory>
+#include <signal.h>
+
+void handler(int)
+{
+    QApplication::exit();
+}
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +20,7 @@ int main(int argc, char *argv[])
     }
 
     share.create(sizeof(bool));
+    signal(SIGINT, handler);
 
     MainWindow w;
     w.show();

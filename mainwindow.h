@@ -23,6 +23,6 @@ class MainWindow : public QLabel
     QPointF press;
     int offsetX = 50, offsetY = 50;
     bool leftClick = false;
-    bool showNet = false;
+    bool showNet = true;
 };
 #endif // MAINWINDOW_H
