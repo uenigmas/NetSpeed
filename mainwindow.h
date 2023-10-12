@@ -1,15 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QMouseEvent>
 #include <QLabel>
+#include <QMouseEvent>
 
-class MainWindow : public QMainWindow
+class MainWindow : public QLabel
 {
     Q_OBJECT
 
-public:
+  public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void mousePressEvent(QMouseEvent *event) override;
@@ -17,11 +16,10 @@ public:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 
-public slots:
+  public slots:
     void refreshUI();
 
-private:
-    QLabel *label = nullptr;
+  private:
     QPointF press;
     int offsetX = 50, offsetY = 50;
     bool leftClick = false;

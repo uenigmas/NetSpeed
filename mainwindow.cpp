@@ -28,6 +28,7 @@ QString humanize(float netspeed)
         netspeed /= 1024;
         n++;
     }
+
     n = n >= 5 ? 4 : n;
     return QString::number(netspeed, 10, 2) + unit[n];
 }
@@ -92,20 +93,17 @@ QString get_net_date()
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QLabel(parent)
 {
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     setWindowModality(Qt::ApplicationModal);
 
     setFixedWidth(200);
     setFixedHeight(28);
 
-    label = new QLabel(this);
-    label->setFixedWidth(width());
-    label->setFixedHeight(height());
-    label->setAlignment(Qt::AlignCenter);
-    label->setStyleSheet("");
-    label->setText("demo");
+    setAlignment(Qt::AlignCenter);
+    setStyleSheet("");
+    setText("");
 
     auto tmr = new QTimer(this);
     tmr->setInterval(1000);
@@ -159,7 +157,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 void MainWindow::refreshUI()
 {
     if (showNet)
-        label->setText(get_net_date());
+        setText(get_net_date());
     else
-        label->setText(get_cpu_and_mem_date());
+        setText(get_cpu_and_mem_date());
 }
