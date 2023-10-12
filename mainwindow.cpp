@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QFile>
 #include <QTimer>
 
@@ -95,6 +96,11 @@ QString get_net_date()
 MainWindow::MainWindow(QWidget *parent)
     : QLabel(parent)
 {
+    auto desktop = QApplication::desktop();
+    auto width = desktop->geometry().width();
+
+    move(width / 2 - 100, 0);
+
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     setWindowModality(Qt::ApplicationModal);
 
